@@ -1,0 +1,5 @@
+/target
+
+# Ignore etl reference files
+*.etl
+*.txt
