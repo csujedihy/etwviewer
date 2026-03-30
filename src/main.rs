@@ -226,7 +226,7 @@ fn format_event_line(evt: &crate::store::ParsedEvent, ts_mode: &crate::app::Time
             let secs = (evt.timestamp / 10_000_000) - 11_644_473_600;
             let nanos = ((evt.timestamp % 10_000_000) * 100) as u32;
             chrono::DateTime::from_timestamp(secs, nanos)
-                .map(|dt| dt.format("%H:%M:%S%.6f").to_string())
+                .map(|dt| dt.format("%Y-%m-%d %H:%M:%S%.6f").to_string())
                 .unwrap_or_default()
         }
         crate::app::TimestampMode::Local => {
@@ -236,7 +236,7 @@ fn format_event_line(evt: &crate::store::ParsedEvent, ts_mode: &crate::app::Time
                 .map(|dt| {
                     use chrono::TimeZone;
                     chrono::Local.from_utc_datetime(&dt.naive_utc())
-                        .format("%H:%M:%S%.6f")
+                        .format("%Y-%m-%d %H:%M:%S%.6f")
                         .to_string()
                 })
                 .unwrap_or_default()

@@ -89,6 +89,8 @@ fn wrap_line(line: Line<'static>, width: usize) -> Text<'static> {
 }
 
 pub fn render_event_table(f: &mut Frame, app: &mut App, area: ratatui::layout::Rect) {
+    const TIMESTAMP_COL_WIDTH: u16 = 26;
+
     let visible_indices = app.visible_indices().to_vec();
     let total = visible_indices.len();
     let (table_area, indicator_area) = if area.width > 24 {
@@ -139,9 +141,9 @@ pub fn render_event_table(f: &mut Frame, app: &mut App, area: ratatui::layout::R
 
     // Compute message column width for wrapping
     let msg_col_width = if app.show_source {
-        table_area.width.saturating_sub(16 + 18 + 3) as usize // time + source + column gaps
+        table_area.width.saturating_sub(TIMESTAMP_COL_WIDTH + 18 + 3) as usize // time + source + column gaps
     } else {
-        table_area.width.saturating_sub(16 + 2) as usize // time + column gap
+        table_area.width.saturating_sub(TIMESTAMP_COL_WIDTH + 2) as usize // time + column gap
     };
 
     if app.show_source {
@@ -195,7 +197,7 @@ pub fn render_event_table(f: &mut Frame, app: &mut App, area: ratatui::layout::R
         }
 
         let widths = [
-            Constraint::Length(16),
+            Constraint::Length(TIMESTAMP_COL_WIDTH),
             Constraint::Length(18),
             Constraint::Fill(1),
         ];
@@ -252,7 +254,7 @@ pub fn render_event_table(f: &mut Frame, app: &mut App, area: ratatui::layout::R
         }
 
         let widths = [
-            Constraint::Length(16),
+            Constraint::Length(TIMESTAMP_COL_WIDTH),
             Constraint::Fill(1),
         ];
 
@@ -454,7 +456,7 @@ fn format_timestamp(filetime: i64, mode: &TimestampMode) -> String {
     match mode {
         TimestampMode::Utc => {
             if let Some(dt) = chrono::DateTime::from_timestamp(secs, nanos) {
-                dt.format("%H:%M:%S%.6f").to_string()
+                dt.format("%Y-%m-%d %H:%M:%S%.6f").to_string()
             } else {
                 format!("0x{:016x}", filetime)
             }
@@ -462,7 +464,7 @@ fn format_timestamp(filetime: i64, mode: &TimestampMode) -> String {
         TimestampMode::Local => {
             if let Some(dt) = chrono::DateTime::from_timestamp(secs, nanos) {
                 let local: chrono::DateTime<chrono::Local> = dt.into();
-                local.format("%H:%M:%S%.6f").to_string()
+                local.format("%Y-%m-%d %H:%M:%S%.6f").to_string()
             } else {
                 format!("0x{:016x}", filetime)
             }
